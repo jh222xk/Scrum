@@ -69,13 +69,20 @@ namespace Medlemsregister
                 }
             }
 
-            // Just write out for now...
-            foreach (var item in memberList)
-            {
-                Console.WriteLine("{0}, {1}, {2}, {3}", item.UserID, item.FirstName, item.LastName, item.PhoneNum);
-            }
-
             return memberList;
+        }
+
+        public void Save(List<Member> members)
+        {
+            using (StreamWriter writer = new StreamWriter(Path, false, System.Text.Encoding.UTF8))
+            {
+                // Iterate through the list of members.
+                foreach (var member in members)
+                {
+                    // Write everything to the file.
+                    writer.WriteLine("{0};{1};{2}ASD{3}", member.UserID, member.FirstName, member.LastName, member.PhoneNum);
+                }
+            }
         }
     }
 }
