@@ -49,6 +49,10 @@ namespace Medlemsregister
 
                 while ((line = reader.ReadLine()) != null)
                 {
+                    if (line == String.Empty)
+                    {
+                        continue;
+                    }
                     // Remove all the semicolons.
                     string[] members = line.Split(';');
 
@@ -80,7 +84,7 @@ namespace Medlemsregister
                 foreach (var member in members)
                 {
                     // Write everything to the file.
-                    writer.WriteLine("{0};{1};{2}ASD{3}", member.UserID, member.FirstName, member.LastName, member.PhoneNum);
+                    writer.WriteLine("{0};{1};{2};{3}", member.UserID, member.FirstName, member.LastName, member.PhoneNum);
                 }
             }
         }

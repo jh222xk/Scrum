@@ -32,6 +32,7 @@ namespace Medlemsregister
                         break;
                     case 3:
                         // Add member
+                        CreateMember(members);
                         Console.WriteLine("");
                         break;
                     case 4:
@@ -129,6 +130,92 @@ namespace Medlemsregister
             }
         }
 
+        // Private static method that returns a string value.
+        private static string ReadString(string prompt)
+        {
+            while (true)
+            {
+                Console.Write(prompt);
+                string inputValue = Console.ReadLine();
+
+                if (string.IsNullOrWhiteSpace(inputValue))
+                {
+                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.BackgroundColor = ConsoleColor.Red;
+                    Console.WriteLine("\nFEL! Ange en sträng.\n");
+                    Console.ResetColor();
+                }
+                else
+                {
+                    return inputValue;
+                }
+            }
+        }
+
+        // Private static method that returns a string value.
+        private static string ReadNum(string prompt)
+        {
+            int number;
+            string inputValue;
+
+            while (true)
+            {
+                Console.Write(prompt);
+                inputValue = Console.ReadLine();
+
+                if ((int.TryParse(inputValue, out number) && number >= 0))
+                {
+                    return inputValue;
+                }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.BackgroundColor = ConsoleColor.Red;
+                    Console.WriteLine("\nFEL! Ange ett nummer.\n");
+                    Console.ResetColor();
+                }
+            }
+        }
+
+        // Private static method for creating a member.
+        private static Member CreateMember(List<Member> members)
+        {
+            int userID;
+            string firstName;
+            string lastName;
+            string phoneNum;
+
+            Console.Clear();
+            Console.BackgroundColor = ConsoleColor.DarkCyan;
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine(" ╔═══════════════════════════════════╗ ");
+            Console.WriteLine(" ║          Lägg till medlem         ║ ");
+            Console.WriteLine(" ╚═══════════════════════════════════╝ ");
+            Console.BackgroundColor = ConsoleColor.Black;
+            Console.WriteLine();
+
+            firstName = ReadString(" Förnamn: ");
+            lastName = ReadString(" Efternamn: ");
+            phoneNum = ReadNum(" Telefonnummer: ");
+
+            if (members.Count < 1)
+            {
+                userID = 1;
+            }
+            else
+            {
+                userID = members[members.Count - 1].UserID + 1;
+            }
+
+            // Create a new member.
+            Member newMember = new Member(userID, firstName, lastName, phoneNum);
+
+            // Add it to the list.
+            members.Add(newMember);
+
+            return newMember;
+        }
+
         // Method to present an indexed list of all members name
         // and let's the user choose from these names and then returns it.
         private static Member GetMember(string header, List<Member> members)
@@ -213,7 +300,7 @@ namespace Medlemsregister
                 Console.BackgroundColor = ConsoleColor.Yellow;
                 Console.ForegroundColor = ConsoleColor.Black;
                 Console.WriteLine(" ╔═══════════════════════════════════╗ ");
-                Console.WriteLine(" ║ Det finns inga recept att visa    ║ ");
+                Console.WriteLine(" ║ Det finns inga medlemmar att visa ║ ");
                 Console.WriteLine(" ╚═══════════════════════════════════╝ ");
                 Console.BackgroundColor = ConsoleColor.Black;
             }
