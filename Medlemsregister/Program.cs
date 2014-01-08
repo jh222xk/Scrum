@@ -11,7 +11,7 @@ namespace Medlemsregister
         static void Main(string[] args)
         {
             bool exit = false;
-            List<Member> members = null;
+            List<Member> members = LoadMembers();
 
             // Just iterate until the user want's to quit the program (0).
             do
@@ -23,31 +23,28 @@ namespace Medlemsregister
                         exit = true;
                         continue;
                     case 1:
-                        // Load member directory
-                        members = LoadMembers();
-                        break;
-                    case 2:
                         // Save members
                         SaveMembers(members);
                         break;
-                    case 3:
+                    case 2:
                         // Add member
                         CreateMember(members);
                         Console.WriteLine("");
                         break;
-                    case 4:
+                    case 3:
                         // Edit member
+                        EditMember(members);
                         Console.WriteLine("");
                         break;
-                    case 5:
+                    case 4:
                         // Delete member
                         Console.WriteLine("");
                         break;
-                    case 6:
-                        // List on member
+                    case 5:
+                        // List one member
                         ViewMember(members);
                         break;
-                    case 7:
+                    case 6:
                         // List all members
                         ViewMember(members, true);
                         break;
@@ -216,6 +213,33 @@ namespace Medlemsregister
             return newMember;
         }
 
+        // Private static method for editing a member.
+        private static void EditMember(List<Member> members)
+        {
+            // Check if there's any members otherwise display a warning message.
+            if (members != null && members.Any())
+            {
+                Console.Clear();
+                Console.BackgroundColor = ConsoleColor.DarkCyan;
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine(" ╔═══════════════════════════════════╗ ");
+                Console.WriteLine(" ║       Välj medlem att ändra       ║ ");
+                Console.WriteLine(" ╚═══════════════════════════════════╝ ");
+                Console.BackgroundColor = ConsoleColor.Black;
+
+            }
+            else
+            {
+                Console.Clear();
+                Console.BackgroundColor = ConsoleColor.Yellow;
+                Console.ForegroundColor = ConsoleColor.Black;
+                Console.WriteLine(" ╔════════════════════════════════════╗ ");
+                Console.WriteLine(" ║ Det finns inga medlemmar att ändra ║ ");
+                Console.WriteLine(" ╚════════════════════════════════════╝ ");
+                Console.BackgroundColor = ConsoleColor.Black;
+            }
+        }
+
         // Method to present an indexed list of all members name
         // and let's the user choose from these names and then returns it.
         private static Member GetMember(string header, List<Member> members)
@@ -322,27 +346,26 @@ namespace Medlemsregister
                 Console.BackgroundColor = ConsoleColor.Black;
                 Console.WriteLine("\n - Arkiv -----------------------------------\n");
                 Console.WriteLine(" 0. Avsluta.");
-                Console.WriteLine(" 1. Öppna medlemsregister.");
-                Console.WriteLine(" 2. Spara medlemmar.");
+                Console.WriteLine(" 1. Spara medlemmar.");
                 Console.WriteLine("\n - Redigera --------------------------------\n");
-                Console.WriteLine(" 3. Lägg till medlem.");
-                Console.WriteLine(" 4. Ändra medlem.");
-                Console.WriteLine(" 5. Ta bort medlem.");
+                Console.WriteLine(" 2. Lägg till medlem.");
+                Console.WriteLine(" 3. Ändra medlem.");
+                Console.WriteLine(" 4. Ta bort medlem.");
                 Console.WriteLine("\n - Lista -----------------------------------\n");
-                Console.WriteLine(" 6. Lista en medlem.");
-                Console.WriteLine(" 7. Lista alla medlemmar.");
+                Console.WriteLine(" 5. Lista en medlem.");
+                Console.WriteLine(" 6. Lista alla medlemmar.");
                 Console.WriteLine("\n ═══════════════════════════════════════════\n");
-                Console.Write(" Ange menyval [0-7]: ");
+                Console.Write(" Ange menyval [0-6]: ");
                 Console.ResetColor();
 
-                if (int.TryParse(Console.ReadLine(), out index) && index >= 0 && index <= 7)
+                if (int.TryParse(Console.ReadLine(), out index) && index >= 0 && index <= 6)
                 {
                     return index;
                 }
 
                 Console.BackgroundColor = ConsoleColor.Red;
                 Console.ForegroundColor = ConsoleColor.White;
-                Console.WriteLine("\n FEL! Ange ett nummer mellan 0 och 7.\n");
+                Console.WriteLine("\n FEL! Ange ett nummer mellan 0 och 6.\n");
                 ContinueOnKeyPressed();
             } while (true);
         }
