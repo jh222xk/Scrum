@@ -8,17 +8,17 @@ namespace Medlemsregister
 {
     class MemberView
     {
-        // Method to render the list of recipes.
+        // Method to render the list of members.
         public void Render(List<Member> members)
         {
-            // Iterate through the recipes list.
+            // Iterate through the members list.
             foreach (var member in members)
             {
                 Render(member);
             }
         }
 
-        // Method to render a recipe.
+        // Method to render a member.
         public void Render(Member member)
         {
             Console.WriteLine();

@@ -216,6 +216,12 @@ namespace Medlemsregister
         // Private static method for editing a member.
         private static void EditMember(List<Member> members)
         {
+            int index;
+            string firstName;
+            string lastName;
+            string phoneNum;
+            bool exit = false;
+
             // Check if there's any members otherwise display a warning message.
             if (members != null && members.Any())
             {
@@ -227,6 +233,95 @@ namespace Medlemsregister
                 Console.WriteLine(" ╚═══════════════════════════════════╝ ");
                 Console.BackgroundColor = ConsoleColor.Black;
 
+                Member m = GetMember("Välj medlem att ändra", members);
+
+                if (m == null)
+                {
+                    return;
+                }
+
+                Console.Clear();
+                Console.BackgroundColor = ConsoleColor.DarkCyan;
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine(" ╔═══════════════════════════════════╗ ");
+                Console.WriteLine(" ║ Ändra medlem, {0} {1}       ║ ", m.FirstName, m.LastName);
+                Console.WriteLine(" ╚═══════════════════════════════════╝ ");
+                Console.BackgroundColor = ConsoleColor.Black;
+                Console.WriteLine();
+
+                do
+                {
+                    Console.WriteLine("\n - Arkiv -----------------------------------\n");
+                    Console.WriteLine(" 0. Avbryt.");
+                    Console.WriteLine("\n - Redigera --------------------------------\n");
+                    Console.WriteLine(" 1. Ändra förnamn.");
+                    Console.WriteLine(" 2. Ändra efternamn.");
+                    Console.WriteLine(" 3. Ändra Telefonnummer.");
+                    Console.WriteLine(" 4. Ändra allt.");
+                    Console.WriteLine("\n ═══════════════════════════════════════════\n");
+                    Console.Write(" Ange menyval [0-4]: ");
+                    Console.ResetColor();
+
+                    bool choice = int.TryParse(Console.ReadLine(), out index) && index >= 0 && index <= 4;
+
+                    if (choice)
+                    {
+                        Console.Clear();
+                        Console.BackgroundColor = ConsoleColor.DarkCyan;
+                        Console.ForegroundColor = ConsoleColor.White;
+                        Console.WriteLine(" ╔═══════════════════════════════════╗ ");
+                        Console.WriteLine(" ║ Ändrar medlem, {0} {1}       ║ ", m.FirstName, m.LastName);
+                        Console.WriteLine(" ╚═══════════════════════════════════╝ ");
+                        Console.BackgroundColor = ConsoleColor.Black;
+                        Console.WriteLine();
+
+                        if (index == 0)
+	                    {
+		                    exit = true;
+                            continue;
+	                    }
+                        else if (index == 1)
+	                    {
+		                    firstName = ReadString(" Förnamn: ");
+                            m.FirstName = firstName;
+                            exit = true;
+                            continue;
+	                    }
+                        else if (index == 2)
+	                    {
+		                    lastName = ReadString(" Efternamn: ");
+                            m.LastName = lastName;
+                            exit = true;
+                            continue;
+	                    }
+                        else if (index == 3)
+	                    {
+		                    phoneNum = ReadNum(" Telefonnummer: ");
+                            m.PhoneNum = phoneNum;
+                            exit = true;
+                            continue;
+	                    }
+                        else if (index == 4)
+	                    {
+		                    firstName = ReadString(" Förnamn: ");
+                            lastName = ReadString(" Efternamn: ");
+                            phoneNum = ReadNum(" Telefonnummer: ");
+                            m.FirstName = firstName;
+                            m.LastName = lastName;
+                            m.PhoneNum = phoneNum;
+                            exit = true;
+                            continue;
+	                    }
+
+                    }
+                    else
+                    {
+                        Console.BackgroundColor = ConsoleColor.Red;
+                        Console.ForegroundColor = ConsoleColor.White;
+                        Console.WriteLine("\n FEL! Ange ett nummer mellan 0 och 6.\n");
+                    }
+                    ContinueOnKeyPressed();
+                } while (!exit);
             }
             else
             {

@@ -14,6 +14,7 @@ namespace Medlemsregister
         private string _lastName;
         private string _phoneNum;
 
+        // Properties
         public int UserID
         {
             get
@@ -85,12 +86,36 @@ namespace Medlemsregister
 
         public int CompareTo(object obj)
         {
-            return this.CompareTo(obj);
+            // Check if object is null.
+            if (obj == null)
+            {
+                return 1;
+            }
+
+            // Type convert the reference obj from object to Recipe.
+            // Throw error if it can't be converted
+            Member other = obj as Member;
+            if (other == null)
+            {
+                throw new ArgumentException();
+            }
+
+            // The name has been compared to with the CompareTo method 
+            // that the String class implements.
+            return UserID.CompareTo(other.UserID);
         }
 
         public int CompareTo(Member other)
         {
-            return this.FirstName.CompareTo(other.FirstName);
+            // Check if other is null.
+            if (other == null)
+            {
+                return 1;
+            }
+
+            // The name has been compared to with the CompareTo method 
+            // that the String class implements.
+            return UserID.CompareTo(other.UserID);
         }
 
 

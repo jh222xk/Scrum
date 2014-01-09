@@ -1,3 +1,3 @@
-﻿1;Kalle;Karlsson;0701234567
+﻿1;Karl;Karlsson;0701234567
 2;Bert;Ljung;0723456789
 3;Alf;Nilsson;0734567899

@@ -73,6 +73,7 @@ namespace Medlemsregister
                 }
             }
 
+            memberList.Sort();
             return memberList;
         }
 
