@@ -53,6 +53,7 @@ namespace Medlemsregister
                     {
                         continue;
                     }
+
                     // Remove all the semicolons.
                     string[] members = line.Split(';');
 
@@ -70,6 +71,7 @@ namespace Medlemsregister
 
                     // Add it to the list.
                     memberList.Add(member);
+
                 }
             }
 

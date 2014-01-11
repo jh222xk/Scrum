@@ -14,37 +14,40 @@ namespace Medlemsregister
             List<Member> members = LoadMembers();
 
             // Just iterate until the user want's to quit the program (0).
-            do
+            if (members != null)
             {
-                switch (GetMenuChoice())
+                do
                 {
-                    case 0:
-                        exit = true;
-                        continue;
-                    case 1:
-                        // Add member
-                        CreateMember(members);
-                        break;
-                    case 2:
-                        // Edit member
-                        EditMember(members);
-                        break;
-                    case 3:
-                        // Delete member
-                        Console.WriteLine("");
-                        break;
-                    case 4:
-                        // List one member
-                        ViewMember(members);
-                        break;
-                    case 5:
-                        // List all members
-                        ViewMember(members, true);
-                        break;
-                }
+                    switch (GetMenuChoice())
+                    {
+                        case 0:
+                            exit = true;
+                            continue;
+                        case 1:
+                            // Add member
+                            CreateMember(members);
+                            break;
+                        case 2:
+                            // Edit member
+                            EditMember(members);
+                            break;
+                        case 3:
+                            // Delete member
+                            DeleteMember(members);
+                            break;
+                        case 4:
+                            // List one member
+                            ViewMember(members);
+                            break;
+                        case 5:
+                            // List all members
+                            ViewMember(members, true);
+                            break;
+                    }
 
-                ContinueOnKeyPressed();
-            } while (!exit);
+                    ContinueOnKeyPressed();
+                } while (!exit);
+            }
         }
 
         private static List<Member> LoadMembers()
@@ -53,25 +56,12 @@ namespace Medlemsregister
             {
                 MemberDirectory repo = new MemberDirectory("members.txt");
                 List<Member> members = repo.Load();
-                Console.Clear();
-                Console.BackgroundColor = ConsoleColor.DarkGreen;
-                Console.ForegroundColor = ConsoleColor.White;
-                Console.WriteLine(" ╔═══════════════════════════════════╗ ");
-                Console.WriteLine(" ║      Medlemmarna har lästs in     ║ ");
-                Console.WriteLine(" ╚═══════════════════════════════════╝ ");
-                Console.BackgroundColor = ConsoleColor.Black;
                 return members;
             }
             catch (Exception)
             {
                 Console.Clear();
-                Console.BackgroundColor = ConsoleColor.Red;
-                Console.ForegroundColor = ConsoleColor.White;
-                Console.WriteLine(" ╔═══════════════════════════════════╗ ");
-                Console.WriteLine(" ║ FEL! Ett fel inträffade då        ║ ");
-                Console.WriteLine(" ║      medlemmarna lästes in.       ║ ");
-                Console.WriteLine(" ╚═══════════════════════════════════╝ ");
-                Console.BackgroundColor = ConsoleColor.Black;
+                MemberView.RenderHeader(" FEL! Ett fel inträffade då medlemsregistret lästes in.", bgcolor: ConsoleColor.Red);
                 return null;
             }
         }
@@ -89,23 +79,12 @@ namespace Medlemsregister
                     repo.Save(members);
 
                     Console.Clear();
-                    Console.BackgroundColor = ConsoleColor.DarkGreen;
-                    Console.ForegroundColor = ConsoleColor.White;
-                    Console.WriteLine(" ╔═══════════════════════════════════╗ ");
-                    Console.WriteLine(" ║      Medlemmarna har sparats      ║ ");
-                    Console.WriteLine(" ╚═══════════════════════════════════╝ ");
-                    Console.BackgroundColor = ConsoleColor.Black;
+                    MemberView.RenderHeader("      Medlemmarna har sparats     ", bgcolor: ConsoleColor.DarkGreen);
                 }
                 catch (Exception)
                 {
                     Console.Clear();
-                    Console.BackgroundColor = ConsoleColor.Red;
-                    Console.ForegroundColor = ConsoleColor.White;
-                    Console.WriteLine(" ╔═══════════════════════════════════╗ ");
-                    Console.WriteLine(" ║ FEL! Ett fel inträffade då        ║ ");
-                    Console.WriteLine(" ║      medlemmarna skulle sparas.   ║ ");
-                    Console.WriteLine(" ╚═══════════════════════════════════╝ ");
-                    Console.BackgroundColor = ConsoleColor.Black;
+                    MemberView.RenderHeader(" FEL! Ett fel inträffade då medlemmarna skulle sparas.", bgcolor: ConsoleColor.Red);
                 }
             }
             else
@@ -170,59 +149,53 @@ namespace Medlemsregister
         // Private static method for creating a member.
         private static Member CreateMember(List<Member> members)
         {
-            int userID;
-            string firstName;
-            string lastName;
-            string phoneNum;
-
-            Console.Clear();
-            Console.BackgroundColor = ConsoleColor.DarkCyan;
-            Console.ForegroundColor = ConsoleColor.White;
-            Console.WriteLine(" ╔═══════════════════════════════════╗ ");
-            Console.WriteLine(" ║          Lägg till medlem         ║ ");
-            Console.WriteLine(" ╚═══════════════════════════════════╝ ");
-            Console.BackgroundColor = ConsoleColor.Black;
-            Console.WriteLine();
-
-            firstName = ReadString(" Förnamn: ");
-            lastName = ReadString(" Efternamn: ");
-            phoneNum = ReadNum(" Telefonnummer: ");
-
-            Console.BackgroundColor = ConsoleColor.Yellow;
-            Console.ForegroundColor = ConsoleColor.Black;
-            Console.Write("\n Är du säker på att du vill lägga till en medlem med förnamn '{0}', ", firstName);
-            Console.Write("\n efternamn '{0}' samt telefonnummer '{1}' [j/n]: ", lastName, phoneNum);
-            Console.ResetColor();
-            ConsoleKeyInfo inputKey = Console.ReadKey();
-
-            if (inputKey.KeyChar == 'j' || inputKey.KeyChar == 'J')
+            if (members != null)
             {
-                if (members.Count < 1)
+                int userID;
+                string firstName;
+                string lastName;
+                string phoneNum;
+
+                Console.Clear();
+                MemberView.RenderHeader("          Lägg till medlem        ");
+                Console.WriteLine();
+
+                firstName = ReadString(" Förnamn: ");
+                lastName = ReadString(" Efternamn: ");
+                phoneNum = ReadNum(" Telefonnummer: ");
+
+                Console.BackgroundColor = ConsoleColor.Yellow;
+                Console.ForegroundColor = ConsoleColor.Black;
+                Console.Write("\n Är du säker på att du vill lägga till en medlem med förnamn '{0}', ", firstName);
+                Console.Write("\n efternamn '{0}' samt telefonnummer '{1}' [j/n]: ", lastName, phoneNum);
+                Console.ResetColor();
+                ConsoleKeyInfo inputKey = Console.ReadKey();
+
+                if (inputKey.KeyChar == 'j' || inputKey.KeyChar == 'J')
                 {
-                    userID = 1;
+                    if (members.Count < 1)
+                    {
+                        userID = 1;
+                    }
+                    else
+                    {
+                        userID = members[members.Count - 1].UserID + 1;
+                    }
+
+                    // Create a new member.
+                    Member newMember = new Member(userID, firstName, lastName, phoneNum);
+
+                    // Add it to the list.
+                    members.Add(newMember);
+
+                    SaveMembers(members);
+
+                    return newMember;
                 }
                 else
                 {
-                    userID = members[members.Count - 1].UserID + 1;
+                    return null;
                 }
-
-                // Create a new member.
-                Member newMember = new Member(userID, firstName, lastName, phoneNum);
-
-                // Add it to the list.
-                members.Add(newMember);
-
-                SaveMembers(members);
-
-                Console.Clear();
-                Console.BackgroundColor = ConsoleColor.DarkGreen;
-                Console.ForegroundColor = ConsoleColor.White;
-                Console.WriteLine(" ╔═══════════════════════════════════╗ ");
-                Console.WriteLine(" ║       Medlem har lagts till       ║ ");
-                Console.WriteLine(" ╚═══════════════════════════════════╝ ");
-                Console.BackgroundColor = ConsoleColor.Black;
-
-                return newMember;
             }
             else
             {
@@ -238,18 +211,14 @@ namespace Medlemsregister
             string firstName;
             string lastName;
             string phoneNum;
+            string header;
             bool exit = false;
 
             // Check if there's any members otherwise display a warning message.
             if (members != null && members.Any())
             {
                 Console.Clear();
-                Console.BackgroundColor = ConsoleColor.DarkCyan;
-                Console.ForegroundColor = ConsoleColor.White;
-                Console.WriteLine(" ╔═══════════════════════════════════╗ ");
-                Console.WriteLine(" ║       Välj medlem att ändra       ║ ");
-                Console.WriteLine(" ╚═══════════════════════════════════╝ ");
-                Console.BackgroundColor = ConsoleColor.Black;
+                MemberView.RenderHeader("       Välj medlem att ändra      ");
 
                 Member m = GetMember("Välj medlem att ändra", members);
 
@@ -259,13 +228,8 @@ namespace Medlemsregister
                 }
 
                 Console.Clear();
-                Console.BackgroundColor = ConsoleColor.DarkCyan;
-                Console.ForegroundColor = ConsoleColor.White;
-                Console.WriteLine(" ╔═══════════════════════════════════╗ ");
-                Console.WriteLine(" ║ Ändra medlem, {0} {1}       ║ ", m.FirstName, m.LastName);
-                Console.WriteLine(" ╚═══════════════════════════════════╝ ");
-                Console.BackgroundColor = ConsoleColor.Black;
-                Console.WriteLine();
+                header = String.Format("      Ändra medlem, {0} {1}     ", m.FirstName, m.LastName);
+                MemberView.RenderHeader(header);
 
                 do
                 {
@@ -285,12 +249,8 @@ namespace Medlemsregister
                     if (choice)
                     {
                         Console.Clear();
-                        Console.BackgroundColor = ConsoleColor.DarkCyan;
-                        Console.ForegroundColor = ConsoleColor.White;
-                        Console.WriteLine(" ╔═══════════════════════════════════╗ ");
-                        Console.WriteLine(" ║ Ändrar medlem, {0} {1}       ║ ", m.FirstName, m.LastName);
-                        Console.WriteLine(" ╚═══════════════════════════════════╝ ");
-                        Console.BackgroundColor = ConsoleColor.Black;
+                        header = String.Format("      Ändrar medlem, {0} {1}     ", m.FirstName, m.LastName);
+                        MemberView.RenderHeader(header);
                         Console.WriteLine();
 
                         if (index == 0)
@@ -312,12 +272,7 @@ namespace Medlemsregister
                                 m.FirstName = firstName;
                                 SaveMembers(members);
                                 Console.Clear();
-                                Console.BackgroundColor = ConsoleColor.DarkGreen;
-                                Console.ForegroundColor = ConsoleColor.White;
-                                Console.WriteLine(" ╔═══════════════════════════════════╗ ");
-                                Console.WriteLine(" ║        Medlem har ändrats         ║ ");
-                                Console.WriteLine(" ╚═══════════════════════════════════╝ ");
-                                Console.BackgroundColor = ConsoleColor.Black;
+                                MemberView.RenderHeader(" Medlem har ändrats", bgcolor: ConsoleColor.DarkGreen);
                                 exit = true;
                                 continue;
                             }
@@ -341,12 +296,7 @@ namespace Medlemsregister
                                 m.LastName = lastName;
                                 SaveMembers(members);
                                 Console.Clear();
-                                Console.BackgroundColor = ConsoleColor.DarkGreen;
-                                Console.ForegroundColor = ConsoleColor.White;
-                                Console.WriteLine(" ╔═══════════════════════════════════╗ ");
-                                Console.WriteLine(" ║        Medlem har ändrats         ║ ");
-                                Console.WriteLine(" ╚═══════════════════════════════════╝ ");
-                                Console.BackgroundColor = ConsoleColor.Black;
+                                MemberView.RenderHeader("         Medlem har ändrats       ", bgcolor: ConsoleColor.DarkGreen);
                                 exit = true;
                                 continue;
                             }
@@ -370,12 +320,7 @@ namespace Medlemsregister
                                 m.PhoneNum = phoneNum;
                                 SaveMembers(members);
                                 Console.Clear();
-                                Console.BackgroundColor = ConsoleColor.DarkGreen;
-                                Console.ForegroundColor = ConsoleColor.White;
-                                Console.WriteLine(" ╔═══════════════════════════════════╗ ");
-                                Console.WriteLine(" ║        Medlem har ändrats         ║ ");
-                                Console.WriteLine(" ╚═══════════════════════════════════╝ ");
-                                Console.BackgroundColor = ConsoleColor.Black;
+                                MemberView.RenderHeader("         Medlem har ändrats       ", bgcolor: ConsoleColor.DarkGreen);
                                 exit = true;
                                 continue;
                             }
@@ -405,12 +350,7 @@ namespace Medlemsregister
                                 m.PhoneNum = phoneNum;
                                 SaveMembers(members);
                                 Console.Clear();
-                                Console.BackgroundColor = ConsoleColor.DarkGreen;
-                                Console.ForegroundColor = ConsoleColor.White;
-                                Console.WriteLine(" ╔═══════════════════════════════════╗ ");
-                                Console.WriteLine(" ║        Medlem har ändrats         ║ ");
-                                Console.WriteLine(" ╚═══════════════════════════════════╝ ");
-                                Console.BackgroundColor = ConsoleColor.Black;
+                                MemberView.RenderHeader("         Medlem har ändrats       ", bgcolor: ConsoleColor.DarkGreen);
                                 exit = true;
                                 continue;
                             }
@@ -434,14 +374,32 @@ namespace Medlemsregister
             else
             {
                 Console.Clear();
-                Console.BackgroundColor = ConsoleColor.Yellow;
-                Console.ForegroundColor = ConsoleColor.Black;
-                Console.WriteLine(" ╔════════════════════════════════════╗ ");
-                Console.WriteLine(" ║ Det finns inga medlemmar att ändra ║ ");
-                Console.WriteLine(" ╚════════════════════════════════════╝ ");
-                Console.BackgroundColor = ConsoleColor.Black;
+                MemberView.RenderHeader(" Det finns inga medlemmar att ändra", bgcolor: ConsoleColor.Yellow, fgcolor: ConsoleColor.Black);
             }
         }
+        // Method to delete a recipe from the list of recipes.
+        private static void DeleteMember(List<Member> members)
+        {
+            // Check if there's any recipes otherwise display a warning message.
+            if (members != null && members.Any())
+            {
+                Console.Clear();
+                MemberView.RenderHeader("      Välj medlem att ta bort     ");
+
+                Member r = GetMember("Välj medlem att ta bort", members);
+
+                if (r == null)
+                {
+                    return;
+                }
+            }
+            else
+            {
+                Console.Clear();
+                MemberView.RenderHeader(" Det finns inga medlemmar att ta bort", bgcolor: ConsoleColor.Yellow, fgcolor: ConsoleColor.Black);
+            }
+        }
+
 
         // Method to present an indexed list of all members name
         // and let's the user choose from these names and then returns it.
@@ -488,6 +446,8 @@ namespace Medlemsregister
         // Method to view a member.
         private static void ViewMember(List<Member> members, bool viewAll = false)
         {
+            string header;
+
             // Check if there's any members otherwise display a warning message.
             if (members != null && members.Any())
             {
@@ -496,12 +456,7 @@ namespace Medlemsregister
                 if (!viewAll)
                 {
                     Console.Clear();
-                    Console.BackgroundColor = ConsoleColor.DarkCyan;
-                    Console.ForegroundColor = ConsoleColor.White;
-                    Console.WriteLine(" ╔═══════════════════════════════════╗ ");
-                    Console.WriteLine(" ║       Välj medlem att visa        ║ ");
-                    Console.WriteLine(" ╚═══════════════════════════════════╝ ");
-                    Console.BackgroundColor = ConsoleColor.Black;
+                    MemberView.RenderHeader("       Välj medlem att visa       ");
 
                     // Get the member we want...
                     Member m = GetMember("Välj medlem att visa", members);
@@ -512,12 +467,8 @@ namespace Medlemsregister
                     }
                     // ... and render it.
                     Console.Clear();
-                    Console.BackgroundColor = ConsoleColor.DarkCyan;
-                    Console.ForegroundColor = ConsoleColor.White;
-                    Console.WriteLine(" ╔═══════════════════════════════════╗ ");
-                    Console.WriteLine(" ║            Visar medlem           ║ ");
-                    Console.WriteLine(" ╚═══════════════════════════════════╝ ");
-                    Console.BackgroundColor = ConsoleColor.Black;
+                    header = String.Format("      Visar medlem, {0} {1}      ", m.FirstName, m.LastName);
+                    MemberView.RenderHeader(header);
                     mView.Render(m);
                 }
                 else
@@ -530,12 +481,7 @@ namespace Medlemsregister
             else
             {
                 Console.Clear();
-                Console.BackgroundColor = ConsoleColor.Yellow;
-                Console.ForegroundColor = ConsoleColor.Black;
-                Console.WriteLine(" ╔═══════════════════════════════════╗ ");
-                Console.WriteLine(" ║ Det finns inga medlemmar att visa ║ ");
-                Console.WriteLine(" ╚═══════════════════════════════════╝ ");
-                Console.BackgroundColor = ConsoleColor.Black;
+                MemberView.RenderHeader(" Det finns inga medlemmar att visa", bgcolor: ConsoleColor.Yellow, fgcolor: ConsoleColor.Black);
             }
 
         }
@@ -546,23 +492,20 @@ namespace Medlemsregister
 
             do
             {
-                Console.Clear();
-                Console.BackgroundColor = ConsoleColor.DarkCyan;
-                Console.ForegroundColor = ConsoleColor.White;
-                Console.WriteLine(" ╔═══════════════════════════════════╗ ");
-                Console.WriteLine(" ║           Medlemsregister         ║ ");
-                Console.WriteLine(" ╚═══════════════════════════════════╝ ");
-                Console.BackgroundColor = ConsoleColor.Black;
-                Console.WriteLine("\n - Arkiv -----------------------------------\n");
+                //Console.Clear();
+                MemberView.RenderHeader("          Medlemsregister         ");
+                Console.WriteLine("\n - Arkiv ------------------------------\n");
                 Console.WriteLine(" 0. Avsluta.");
                 Console.WriteLine(" 1. Lägg till medlem.");
-                Console.WriteLine("\n - Redigera --------------------------------\n");
+                Console.WriteLine("\n - Redigera ---------------------------\n");
                 Console.WriteLine(" 2. Ändra medlem.");
                 Console.WriteLine(" 3. Ta bort medlem.");
-                Console.WriteLine("\n - Lista -----------------------------------\n");
+                Console.WriteLine("\n - Lista ------------------------------\n");
                 Console.WriteLine(" 4. Lista en medlem.");
                 Console.WriteLine(" 5. Lista alla medlemmar.");
-                Console.WriteLine("\n ═══════════════════════════════════════════\n");
+                Console.WriteLine();
+                MemberView.HorizontalLine(39);
+                Console.WriteLine();
                 Console.Write(" Ange menyval [0-5]: ");
                 Console.ResetColor();
 
