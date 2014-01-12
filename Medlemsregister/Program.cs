@@ -377,20 +377,48 @@ namespace Medlemsregister
                 MemberView.RenderHeader(" Det finns inga medlemmar att ändra", bgcolor: ConsoleColor.Yellow, fgcolor: ConsoleColor.Black);
             }
         }
-        // Method to delete a recipe from the list of recipes.
+        // Method to delete a member from the list of members.
         private static void DeleteMember(List<Member> members)
         {
-            // Check if there's any recipes otherwise display a warning message.
+            string header;
+
+            // Check if there's any members otherwise display a warning message.
             if (members != null && members.Any())
             {
                 Console.Clear();
                 MemberView.RenderHeader("      Välj medlem att ta bort     ");
 
-                Member r = GetMember("Välj medlem att ta bort", members);
+                Member m = GetMember("Välj medlem att ta bort", members);
 
-                if (r == null)
+                if (m == null)
                 {
                     return;
+                }
+                // Check so the user is really sure that's this is the right recipe to
+                // if it is; delete it. else; just return to the menu again.
+                Console.BackgroundColor = ConsoleColor.Yellow;
+                Console.ForegroundColor = ConsoleColor.Black;
+                Console.Write("\n Är du säker på att du vill ta bort medlemmen: '{0} {1}' [j/n]: ", m.FirstName, m.LastName);
+                Console.ResetColor();
+                ConsoleKeyInfo inputKey = Console.ReadKey();
+
+                if (inputKey.KeyChar == 'j' || inputKey.KeyChar == 'J')
+                {
+                    // Try to remove it otherwise display an error.
+                    try
+                    {
+                        members.Remove(m);
+                        SaveMembers(members);
+                        Console.Clear();
+                        header = String.Format("      Medlemmen, {0} {1} har tagits bort    ", m.FirstName, m.LastName);
+                        MemberView.RenderHeader(header, bgcolor: ConsoleColor.DarkGreen);
+                    }
+                    catch (Exception)
+                    {
+                        Console.Clear();
+                        MemberView.RenderHeader(" FEL! Ett fel inträffade då medlemmen skulle tas bort.", bgcolor: ConsoleColor.Red);
+                    }
+
                 }
             }
             else
