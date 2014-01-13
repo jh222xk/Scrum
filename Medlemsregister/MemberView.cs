@@ -11,7 +11,9 @@ namespace Medlemsregister
         // Method to render the list of members.
         public void Render(List<Member> members)
         {
-            MemberView.RenderHeader("          Visar medlemmar         ");
+            MemberView mView = new MemberView();
+
+            mView.RenderHeader("          Visar medlemmar         ");
 
             // Iterate through the members list.
             foreach (var member in members)
@@ -42,7 +44,7 @@ namespace Medlemsregister
         }
 
         // Method to render the header with a text, background and foreground color.
-        public static void RenderHeader(string header, ConsoleColor bgcolor = ConsoleColor.DarkCyan, ConsoleColor fgcolor = ConsoleColor.White)
+        public void RenderHeader(string header, ConsoleColor bgcolor = ConsoleColor.DarkCyan, ConsoleColor fgcolor = ConsoleColor.White)
         {
             Console.BackgroundColor = bgcolor;
             Console.ForegroundColor = fgcolor;

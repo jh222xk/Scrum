@@ -35,6 +35,7 @@ namespace Medlemsregister
         }
 
         // Methods
+        // Method to read the file.
         public List<Member> Load()
         {
             // Create a member list
@@ -47,8 +48,10 @@ namespace Medlemsregister
             {
                 string line = null;
 
+                // Go through the register.
                 while ((line = reader.ReadLine()) != null)
                 {
+                    // If there's a empty line in the file just continue.
                     if (line == String.Empty)
                     {
                         continue;
@@ -57,6 +60,7 @@ namespace Medlemsregister
                     // Remove all the semicolons.
                     string[] members = line.Split(';');
 
+                    // Check if it's four parts e.g. 1;Nisse;Hult;0701234567
                     if (members.Length != 4)
                     {
                         throw new ApplicationException("Wrong formatted file!");
@@ -75,10 +79,14 @@ namespace Medlemsregister
                 }
             }
 
+            // Sort it by UserID...
             memberList.Sort();
+
+            // ... and return the list.
             return memberList;
         }
 
+        // Method for saving to the file.
         public void Save(List<Member> members)
         {
             using (StreamWriter writer = new StreamWriter(Path, false, System.Text.Encoding.UTF8))

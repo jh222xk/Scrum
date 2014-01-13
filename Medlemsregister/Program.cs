@@ -13,9 +13,10 @@ namespace Medlemsregister
             bool exit = false;
             List<Member> members = LoadMembers();
 
-            // Just iterate until the user want's to quit the program (0).
+            // Really see so the file is correctly loaded.
             if (members != null)
             {
+                // Just iterate until the user want's to quit the program (0).
                 do
                 {
                     switch (GetMenuChoice())
@@ -44,24 +45,32 @@ namespace Medlemsregister
                             ViewMember(members, true);
                             break;
                     }
-
                     ContinueOnKeyPressed();
                 } while (!exit);
             }
         }
 
+        // Private static method for loading the list of members.
         private static List<Member> LoadMembers()
         {
+            MemberView mView = new MemberView();
+
+            // Try to open a file named "members.txt" and the return the list so we can use that list
+            // for all the other methods.
             try
             {
                 MemberDirectory repo = new MemberDirectory("members.txt");
                 List<Member> members = repo.Load();
                 return members;
             }
+            // Else catch the exception and return NULL as well as a error message will be presented.
             catch (Exception)
             {
+                // Display a header from the RenderHeader method.
                 Console.Clear();
-                MemberView.RenderHeader(" FEL! Ett fel inträffade då medlemsregistret lästes in.", bgcolor: ConsoleColor.Red);
+                mView.RenderHeader(" FEL! Ett fel inträffade då medlemsregistret lästes in.", bgcolor: ConsoleColor.Red);
+
+                // And return null.
                 return null;
             }
         }
@@ -69,6 +78,8 @@ namespace Medlemsregister
         // Method to save members
         private static void SaveMembers(List<Member> members)
         {
+            MemberView mView = new MemberView();
+
             // Check if there's any members otherwise display a warning message.
             if (members != null && members.Any())
             {
@@ -78,35 +89,35 @@ namespace Medlemsregister
                     MemberDirectory repo = new MemberDirectory("members.txt");
                     repo.Save(members);
 
+                    // Display a header from the RenderHeader method.
                     Console.Clear();
-                    MemberView.RenderHeader("      Medlemmarna har sparats     ", bgcolor: ConsoleColor.DarkGreen);
+                    mView.RenderHeader("      Medlemmarna har sparats     ", bgcolor: ConsoleColor.DarkGreen);
                 }
                 catch (Exception)
                 {
+                    // Display a header from the RenderHeader method.
                     Console.Clear();
-                    MemberView.RenderHeader(" FEL! Ett fel inträffade då medlemmarna skulle sparas.", bgcolor: ConsoleColor.Red);
+                    mView.RenderHeader(" FEL! Ett fel inträffade då medlemmarna skulle sparas.", bgcolor: ConsoleColor.Red);
                 }
             }
             else
             {
+                // Display a header from the RenderHeader method.
                 Console.Clear();
-                Console.BackgroundColor = ConsoleColor.Yellow;
-                Console.ForegroundColor = ConsoleColor.Black;
-                Console.WriteLine(" ╔══════════════════════════════════════╗ ");
-                Console.WriteLine(" ║  Det finns inga medlemmar att spara  ║ ");
-                Console.WriteLine(" ╚══════════════════════════════════════╝ ");
-                Console.BackgroundColor = ConsoleColor.Black;
+                mView.RenderHeader("  Det finns inga medlemmar att spara ", bgcolor: ConsoleColor.Yellow, fgcolor: ConsoleColor.Black);
             }
         }
 
         // Private static method that returns a string value.
         private static string ReadString(string prompt)
         {
+            // Iterate until the users pass a valid value.
             while (true)
             {
                 Console.Write(prompt);
                 string inputValue = Console.ReadLine();
 
+                // Check if it's really a string.
                 if (string.IsNullOrWhiteSpace(inputValue))
                 {
                     Console.ForegroundColor = ConsoleColor.White;
@@ -127,11 +138,13 @@ namespace Medlemsregister
             int number;
             string inputValue;
 
+            // Iterate until the users pass a valid value.
             while (true)
             {
                 Console.Write(prompt);
                 inputValue = Console.ReadLine();
 
+                // Just check if what the user types is a integer but return a string.
                 if ((int.TryParse(inputValue, out number) && number >= 0))
                 {
                     return inputValue;
@@ -155,22 +168,29 @@ namespace Medlemsregister
                 string firstName;
                 string lastName;
                 string phoneNum;
+                MemberView mView = new MemberView();
 
+                // Display a header from the RenderHeader method.
                 Console.Clear();
-                MemberView.RenderHeader("          Lägg till medlem        ");
+                mView.RenderHeader("          Lägg till medlem        ");
                 Console.WriteLine();
 
+                // Call the methods for getting validated data.
                 firstName = ReadString(" Förnamn: ");
                 lastName = ReadString(" Efternamn: ");
                 phoneNum = ReadNum(" Telefonnummer: ");
 
+                // Output a "Are you sure prompt?" so the user can think two times.
                 Console.BackgroundColor = ConsoleColor.Yellow;
                 Console.ForegroundColor = ConsoleColor.Black;
                 Console.Write("\n Är du säker på att du vill lägga till en medlem med förnamn '{0}', ", firstName);
                 Console.Write("\n efternamn '{0}' samt telefonnummer '{1}' [j/n]: ", lastName, phoneNum);
                 Console.ResetColor();
+
+                // Read the key...
                 ConsoleKeyInfo inputKey = Console.ReadKey();
 
+                // ... and check if the key is either small or large "j".
                 if (inputKey.KeyChar == 'j' || inputKey.KeyChar == 'J')
                 {
                     if (members.Count < 1)
@@ -188,8 +208,10 @@ namespace Medlemsregister
                     // Add it to the list.
                     members.Add(newMember);
 
+                    // Save the member to the file...
                     SaveMembers(members);
 
+                    // ... and return it.
                     return newMember;
                 }
                 else
@@ -213,24 +235,26 @@ namespace Medlemsregister
             string phoneNum;
             string header;
             bool exit = false;
+            MemberView mView = new MemberView();
 
             // Check if there's any members otherwise display a warning message.
             if (members != null && members.Any())
             {
-                Console.Clear();
-                MemberView.RenderHeader("       Välj medlem att ändra      ");
-
+                // Get the member we want using the GetMember method.
                 Member m = GetMember("Välj medlem att ändra", members);
 
+                // If m is null just break out of the method.
                 if (m == null)
                 {
                     return;
                 }
 
+                // Display a header from the RenderHeader method.
                 Console.Clear();
                 header = String.Format("      Ändra medlem, {0} {1}     ", m.FirstName, m.LastName);
-                MemberView.RenderHeader(header);
+                mView.RenderHeader(header);
 
+                // Display a list of options for the user.
                 do
                 {
                     Console.WriteLine("\n - Arkiv -----------------------------------\n");
@@ -244,13 +268,16 @@ namespace Medlemsregister
                     Console.Write(" Ange menyval [0-4]: ");
                     Console.ResetColor();
 
+                    // Get the choice that the user made.
                     bool choice = int.TryParse(Console.ReadLine(), out index) && index >= 0 && index <= 4;
+
 
                     if (choice)
                     {
+                        // Display a header from the RenderHeader method.
                         Console.Clear();
                         header = String.Format("      Ändrar medlem, {0} {1}     ", m.FirstName, m.LastName);
-                        MemberView.RenderHeader(header);
+                        mView.RenderHeader(header);
                         Console.WriteLine();
 
                         if (index == 0)
@@ -260,19 +287,32 @@ namespace Medlemsregister
 	                    }
                         else if (index == 1)
 	                    {
+                            // Validate the firstName.
 		                    firstName = ReadString(" Förnamn: ");
+
+                            // Output a "Are you sure prompt?" so the user can think two times.
                             Console.BackgroundColor = ConsoleColor.Yellow;
                             Console.ForegroundColor = ConsoleColor.Black;
                             Console.Write("\n Är du säker på att du vill ändra '{0} {1}'s förnamn till '{2}'? [j/n]: ", m.FirstName, m.LastName, firstName);
                             Console.ResetColor();
+
+                            // Read the key...
                             ConsoleKeyInfo inputKey = Console.ReadKey();
 
+                            // ... and check if the key is either small or large "j".
                             if (inputKey.KeyChar == 'j' || inputKey.KeyChar == 'J')
                             {
+                                // Set the FirstName to what the user specified.
                                 m.FirstName = firstName;
+
+                                // Save it to file.
                                 SaveMembers(members);
+
+                                // Display a header from the RenderHeader method.
                                 Console.Clear();
-                                MemberView.RenderHeader(" Medlem har ändrats", bgcolor: ConsoleColor.DarkGreen);
+                                mView.RenderHeader(" Medlem har ändrats", bgcolor: ConsoleColor.DarkGreen);
+
+                                // After changes have been made just exit from this.
                                 exit = true;
                                 continue;
                             }
@@ -284,19 +324,32 @@ namespace Medlemsregister
 	                    }
                         else if (index == 2)
 	                    {
+                            // Validate the lastName.
 		                    lastName = ReadString(" Efternamn: ");
+
+                            // Output a "Are you sure prompt?" so the user can think two times.
                             Console.BackgroundColor = ConsoleColor.Yellow;
                             Console.ForegroundColor = ConsoleColor.Black;
                             Console.Write("\n Är du säker på att du vill ändra '{0} {1}'s efternamn till '{2}'? [j/n]: ", m.FirstName, m.LastName, lastName);
                             Console.ResetColor();
+
+                            // Read the key...
                             ConsoleKeyInfo inputKey = Console.ReadKey();
 
+                            // ... and check if the key is either small or large "j".
                             if (inputKey.KeyChar == 'j' || inputKey.KeyChar == 'J')
                             {
+                                // Set the LastName to what the user specified.
                                 m.LastName = lastName;
+
+                                // Save it to file.
                                 SaveMembers(members);
+
+                                // Display a header from the RenderHeader method.
                                 Console.Clear();
-                                MemberView.RenderHeader("         Medlem har ändrats       ", bgcolor: ConsoleColor.DarkGreen);
+                                mView.RenderHeader("         Medlem har ändrats       ", bgcolor: ConsoleColor.DarkGreen);
+
+                                // After changes have been made just exit from this.
                                 exit = true;
                                 continue;
                             }
@@ -308,19 +361,32 @@ namespace Medlemsregister
 	                    }
                         else if (index == 3)
 	                    {
+                            // Validate the phoneNum.
 		                    phoneNum = ReadNum(" Telefonnummer: ");
+
+                            // Output a "Are you sure prompt?" so the user can think two times.
                             Console.BackgroundColor = ConsoleColor.Yellow;
                             Console.ForegroundColor = ConsoleColor.Black;
                             Console.Write("\n Är du säker på att du vill ändra '{0} {1}'s telefonnummer till '{2}'? [j/n]: ", m.FirstName, m.LastName, phoneNum);
                             Console.ResetColor();
+
+                            // Read the key...
                             ConsoleKeyInfo inputKey = Console.ReadKey();
 
+                            // ... and check if the key is either small or large "j".
                             if (inputKey.KeyChar == 'j' || inputKey.KeyChar == 'J')
                             {
+                                // Set the PhoneNum to what the user specified.
                                 m.PhoneNum = phoneNum;
+
+                                // Save it to file.
                                 SaveMembers(members);
+
+                                // Display a header from the RenderHeader method.
                                 Console.Clear();
-                                MemberView.RenderHeader("         Medlem har ändrats       ", bgcolor: ConsoleColor.DarkGreen);
+                                mView.RenderHeader("         Medlem har ändrats       ", bgcolor: ConsoleColor.DarkGreen);
+
+                                // After changes have been made just exit from this.
                                 exit = true;
                                 continue;
                             }
@@ -332,25 +398,37 @@ namespace Medlemsregister
 	                    }
                         else if (index == 4)
 	                    {
+                            // Validate all the input values.
 		                    firstName = ReadString(" Förnamn: ");
                             lastName = ReadString(" Efternamn: ");
                             phoneNum = ReadNum(" Telefonnummer: ");
-                            
+
+                            // Output a "Are you sure prompt?" so the user can think two times.
                             Console.BackgroundColor = ConsoleColor.Yellow;
                             Console.ForegroundColor = ConsoleColor.Black;
                             Console.Write("\n Är du säker på att du vill ändra '{0} {1}'s förnamn till '{2}', ", m.FirstName, m.LastName, firstName);
                             Console.Write("\n efternamn till '{0}' samt telefonnummer till '{1}'? [j/n]: ", lastName, phoneNum);
                             Console.ResetColor();
+
+                            // Read the key...
                             ConsoleKeyInfo inputKey = Console.ReadKey();
 
+                            // ... and check if the key is either small or large "j".
                             if (inputKey.KeyChar == 'j' || inputKey.KeyChar == 'J')
                             {
+                                // Set all the values to what the user specified.
                                 m.FirstName = firstName;
                                 m.LastName = lastName;
                                 m.PhoneNum = phoneNum;
+
+                                // Save it to file.
                                 SaveMembers(members);
+
+                                // Display a header from the RenderHeader method.
                                 Console.Clear();
-                                MemberView.RenderHeader("         Medlem har ändrats       ", bgcolor: ConsoleColor.DarkGreen);
+                                mView.RenderHeader("         Medlem har ändrats       ", bgcolor: ConsoleColor.DarkGreen);
+                                // After changes have been made just exit from this.
+
                                 exit = true;
                                 continue;
                             }
@@ -373,58 +451,74 @@ namespace Medlemsregister
             }
             else
             {
+                // Display a header from the RenderHeader method.
                 Console.Clear();
-                MemberView.RenderHeader(" Det finns inga medlemmar att ändra", bgcolor: ConsoleColor.Yellow, fgcolor: ConsoleColor.Black);
+                mView.RenderHeader(" Det finns inga medlemmar att ändra", bgcolor: ConsoleColor.Yellow, fgcolor: ConsoleColor.Black);
             }
         }
         // Method to delete a member from the list of members.
         private static void DeleteMember(List<Member> members)
         {
             string header;
+            MemberView mView = new MemberView();
 
             // Check if there's any members otherwise display a warning message.
             if (members != null && members.Any())
             {
+                // Display a header from the RenderHeader method.
                 Console.Clear();
-                MemberView.RenderHeader("      Välj medlem att ta bort     ");
+                mView.RenderHeader("      Välj medlem att ta bort     ");
 
+                // Get the member we want using the GetMember method.
                 Member m = GetMember("Välj medlem att ta bort", members);
 
+                // If m is null just break out of the method.
                 if (m == null)
                 {
                     return;
                 }
+
                 // Check so the user is really sure that's this is the right recipe to
                 // if it is; delete it. else; just return to the menu again.
                 Console.BackgroundColor = ConsoleColor.Yellow;
                 Console.ForegroundColor = ConsoleColor.Black;
                 Console.Write("\n Är du säker på att du vill ta bort medlemmen: '{0} {1}' [j/n]: ", m.FirstName, m.LastName);
                 Console.ResetColor();
+
+                // Read the key...
                 ConsoleKeyInfo inputKey = Console.ReadKey();
 
+                // ... and check if the key is either small or large "j".
                 if (inputKey.KeyChar == 'j' || inputKey.KeyChar == 'J')
                 {
                     // Try to remove it otherwise display an error.
                     try
                     {
+                        // Just remove it.
                         members.Remove(m);
+
+                        // Save the file.
                         SaveMembers(members);
+
+                        // Display a header from the RenderHeader method.
                         Console.Clear();
                         header = String.Format("      Medlemmen, {0} {1} har tagits bort    ", m.FirstName, m.LastName);
-                        MemberView.RenderHeader(header, bgcolor: ConsoleColor.DarkGreen);
+                        mView.RenderHeader(header, bgcolor: ConsoleColor.DarkGreen);
                     }
                     catch (Exception)
                     {
+                        // Display a header from the RenderHeader method.
                         Console.Clear();
-                        MemberView.RenderHeader(" FEL! Ett fel inträffade då medlemmen skulle tas bort.", bgcolor: ConsoleColor.Red);
+                        mView.RenderHeader(" FEL! Ett fel inträffade då medlemmen skulle tas bort.", bgcolor: ConsoleColor.Red);
                     }
 
                 }
             }
             else
             {
+                // Display a header from the RenderHeader method.
                 Console.Clear();
-                MemberView.RenderHeader(" Det finns inga medlemmar att ta bort", bgcolor: ConsoleColor.Yellow, fgcolor: ConsoleColor.Black);
+                mView.RenderHeader(" Det finns inga medlemmar att ta bort", bgcolor: ConsoleColor.Yellow, fgcolor: ConsoleColor.Black);
             }
         }
 
@@ -435,8 +529,14 @@ namespace Medlemsregister
         {
             int index;
 
+            MemberView mView = new MemberView();
+
             do
             {
+                // Display a header from the RenderHeader method.
+                Console.Clear();
+                mView.RenderHeader(header);
+
                 Console.BackgroundColor = ConsoleColor.Black;
                 Console.WriteLine("\n 0. Avbryt.");
                 Console.WriteLine("\n -----------------------------------\n");
@@ -446,17 +546,22 @@ namespace Medlemsregister
                 {
                     Console.WriteLine(" {0}. {1} {2} ", item + 1, members[item].FirstName, members[item].LastName);
                 }
+
                 Console.WriteLine("\n ═══════════════════════════════════ \n");
                 Console.Write(" Välj medlem [1-{0}, avbryt (0)]: ", members.Count);
                 Console.ResetColor();
+
+                // Get the choice that the user made.
                 bool choice = int.TryParse(Console.ReadLine(), out index) && index >= 0 && index <= members.Count;
 
                 if (choice)
                 {
+                    // If the index is greater than zero return the member we choosed.
                     if (index > 0)
                     {
                         return members[index - 1];
                     }
+                    // Else return null.
                     else
                     {
                         return null;
@@ -475,28 +580,31 @@ namespace Medlemsregister
         private static void ViewMember(List<Member> members, bool viewAll = false)
         {
             string header;
+            MemberView mView = new MemberView();
 
             // Check if there's any members otherwise display a warning message.
             if (members != null && members.Any())
             {
-                MemberView mView = new MemberView();
-
                 if (!viewAll)
                 {
                     Console.Clear();
-                    MemberView.RenderHeader("       Välj medlem att visa       ");
+                    mView.RenderHeader("       Välj medlem att visa       ");
 
-                    // Get the member we want...
+                    // Get the member we want using the GetMember method.
                     Member m = GetMember("Välj medlem att visa", members);
 
+                    // If m is null just break out of the method.
                     if (m == null)
                     {
                         return;
                     }
-                    // ... and render it.
+
+                    // Display a header from the RenderHeader method.
                     Console.Clear();
                     header = String.Format("      Visar medlem, {0} {1}      ", m.FirstName, m.LastName);
-                    MemberView.RenderHeader(header);
+                    mView.RenderHeader(header);
+
+                    // And render the user.
                     mView.Render(m);
                 }
                 else
@@ -508,20 +616,24 @@ namespace Medlemsregister
             }
             else
             {
+                // Display a header from the RenderHeader method.
                 Console.Clear();
-                MemberView.RenderHeader(" Det finns inga medlemmar att visa", bgcolor: ConsoleColor.Yellow, fgcolor: ConsoleColor.Black);
+                mView.RenderHeader(" Det finns inga medlemmar att visa", bgcolor: ConsoleColor.Yellow, fgcolor: ConsoleColor.Black);
             }
 
         }
 
+        // Private static method for displaying the Menu and read the choice.
         private static int GetMenuChoice()
         {
             int index;
 
+            MemberView mView = new MemberView();
+
             do
             {
-                //Console.Clear();
-                MemberView.RenderHeader("          Medlemsregister         ");
+                // Output everything.
+                mView.RenderHeader("          Medlemsregister         ");
                 Console.WriteLine("\n - Arkiv ------------------------------\n");
                 Console.WriteLine(" 0. Avsluta.");
                 Console.WriteLine(" 1. Lägg till medlem.");
@@ -537,6 +649,7 @@ namespace Medlemsregister
                 Console.Write(" Ange menyval [0-5]: ");
                 Console.ResetColor();
 
+                // Check the choice and return it.
                 if (int.TryParse(Console.ReadLine(), out index) && index >= 0 && index <= 5)
                 {
                     return index;
@@ -549,15 +662,22 @@ namespace Medlemsregister
             } while (true);
         }
 
+        // Private static method for pressing any key to continue.
         private static void ContinueOnKeyPressed()
         {
             Console.ForegroundColor = ConsoleColor.White;
             Console.BackgroundColor = ConsoleColor.DarkBlue;
             Console.Write("\n   Tryck tangent för att fortsätta   ");
             Console.ResetColor();
+            
+            // Hide the cursor.
             Console.CursorVisible = false;
+
+            // Read the key.
             Console.ReadKey(true);
             Console.Clear();
+
+            // Show the cursor.
             Console.CursorVisible = true;
         }
     }

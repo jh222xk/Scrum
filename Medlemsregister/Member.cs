@@ -92,7 +92,7 @@ namespace Medlemsregister
                 return 1;
             }
 
-            // Type convert the reference obj from object to Recipe.
+            // Type convert the reference obj from object to Member.
             // Throw error if it can't be converted
             Member other = obj as Member;
             if (other == null)
@@ -100,7 +100,7 @@ namespace Medlemsregister
                 throw new ArgumentException();
             }
 
-            // The name has been compared to with the CompareTo method 
+            // The UserID has been compared to with the CompareTo method 
             // that the String class implements.
             return UserID.CompareTo(other.UserID);
         }
@@ -113,7 +113,7 @@ namespace Medlemsregister
                 return 1;
             }
 
-            // The name has been compared to with the CompareTo method 
+            // The UserID has been compared to with the CompareTo method 
             // that the String class implements.
             return UserID.CompareTo(other.UserID);
         }
